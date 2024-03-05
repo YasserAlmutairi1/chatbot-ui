@@ -1,0 +1,38 @@
+import { Translate } from '@google-cloud/translate';
+const translate = new Translate();
+
+async function translateText(text: string, targetLanguage: string): Promise<string> {
+  const [translation] = await translate.translate(text, targetLanguage);
+  return translation;
+}
+
+function botTalk(message: string, language: string): Promise<string> {
+  switch (language) {
+    case 'en':
+      // English
+      return Promise.resolve("Hello, how can I assist you?");
+    case 'fr':
+      // French
+      return Promise.resolve("Bonjour, comment puis-je vous aider ?");
+    case 'es':
+      // Spanish
+      return Promise.resolve("Hola, ¿en qué puedo ayudarte?");
+    default:
+      // Default response in English
+      return Promise.resolve("Hello, how can I assist you?");
+  }
+}
+
+// Example usage
+const userMessage: string = "Hello";
+const userLanguage: string = "fr";
+botTalk(userMessage, userLanguage)
+  .then((botResponse: string) => {
+    return translateText(botResponse, userLanguage);
+  })
+  .then((translatedResponse: string) => {
+    console.log("Bot:", translatedResponse);
+  })
+  .catch((error: any) => {
+    console.error("Error:", error);
+  });
