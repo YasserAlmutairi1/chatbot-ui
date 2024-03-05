@@ -1,0 +1,28 @@
+function botProgrammer(message: string): string {
+  const keywords = {
+    python: ['python', 'py'],
+    javascript: ['javascript', 'js'],
+    java: ['java'],
+    csharp: ['c#', 'csharp'],
+    cpp: ['c++', 'cpp'],
+    ruby: ['ruby'],
+    swift: ['swift'],
+    go: ['go'],
+    php: ['php'],
+  };
+
+  // Check for programming language keywords
+  for (const language in keywords) {
+    if (keywords[language].some(keyword => message.toLowerCase().includes(keyword))) {
+      return `Sure! I can help with ${language} programming. What would you like to know?`;
+    }
+  }
+
+  // If no specific language is mentioned
+  return "Sure! I can help with programming. Please specify the programming language you need assistance with.";
+}
+
+// Example usage
+const userMessage: string = "Do you know how to write Python code?";
+const botResponse: string = botProgrammer(userMessage);
+console.log("Bot:", botResponse);
