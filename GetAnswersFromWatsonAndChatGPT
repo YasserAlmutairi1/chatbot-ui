@@ -1,0 +1,58 @@
+import { AssistantV2 } from 'ibm-watson/assistant/v2';
+import { IamAuthenticator } from 'ibm-watson/auth';
+import axios from 'axios';
+
+const watsonAssistant = new AssistantV2({
+  version: '2021-06-14',
+  authenticator: new IamAuthenticator({
+    apikey: 'YOUR_WATSON_ASSISTANT_API_KEY',
+  }),
+  serviceUrl: 'YOUR_WATSON_ASSISTANT_SERVICE_URL',
+});
+
+const chatGPTUrl = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+
+async function getWatsonAssistantResponse(message: string): Promise<string> {
+  const params = {
+    input: {
+      message_type: 'text',
+      text: message,
+    },
+  };
+
+  const response = await watsonAssistant.message(params);
+  const watsonResponse = response.result.output.generic[0].text;
+  return watsonResponse;
+}
+
+async function getChatGPTResponse(message: string): Promise<string> {
+  const headers = {
+    'Authorization': 'Bearer YOUR_OPENAI_API_KEY',
+    'Content-Type': 'application/json',
+  };
+
+  const data = {
+    prompt: message,
+    max_tokens: 50,
+  };
+
+  const response = await axios.post(chatGPTUrl, data, { headers });
+  const chatGPTResponse = response.data.choices[0].text.trim();
+  return chatGPTResponse;
+}
+
+async function botTalk(message: string): Promise<string> {
+  const watsonResponse = await getWatsonAssistantResponse(message);
+  const chatGPTResponse = await getChatGPTResponse(watsonResponse);
+  return chatGPTResponse;
+}
+
+// Example usage
+const userMessage: string = "Hello";
+botTalk(userMessage)
+  .then((botResponse: string) => {
+    console.log("Bot:", botResponse);
+  })
+  .catch((error: any) => {
+    console.error("Error:", error);
+  });
