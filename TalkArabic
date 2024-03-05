@@ -1,0 +1,23 @@
+import { Translate } from '@google-cloud/translate';
+const translate = new Translate();
+
+async function translateText(text: string, targetLanguage: string): Promise<string> {
+  const [translation] = await translate.translate(text, targetLanguage);
+  return translation;
+}
+
+function botTalk(message: string): Promise<string> {
+  // Arabic
+  const response = "مرحبًا، كيف يمكنني مساعدتك؟";
+  return translateText(response, 'ar');
+}
+
+// Example usage
+const userMessage: string = "Hello";
+botTalk(userMessage)
+  .then((botResponse: string) => {
+    console.log("Bot:", botResponse);
+  })
+  .catch((error: any) => {
+    console.error("Error:", error);
+  });
